@@ -13,7 +13,7 @@ int action(void){
 		nst = 0;
 		return 0;
 	} else {
-		mierz();
+		
 		//kalibruj();
 		//kal_count++;
 		return move_real();
@@ -24,6 +24,52 @@ int action(void){
 Krok do przodu w rzeczywistosci
 */
 void step_forwards_real(void){
+	mierz_count = 0;
+	flaga_czuj = 0;
+	mierz();
+
+	if(mouse_dir_real == UP || mouse_dir_real == DOWN){
+		//LcdClear();
+		//LcdDec(par.posy);
+		//Lcd(" ");
+		//Dec(OFFSET_Y + MM_NA_KRATKE*labposy_real);
+		forward(OFFSET_Y + MM_NA_KRATKE*labposy_real - (int16_t) par.posy,);
+		flaga_czuj = 1;
+		_delay_ms(10);
+		flaga_czuj = 0;
+		mierz();
+		flaga_czuj = 1;
+		_delay_ms(10);
+		flaga_czuj = 0;
+		mierz();
+		flaga_czuj = 1;
+		_delay_ms(10);
+		flaga_czuj = 0;
+		mierz();
+		flaga_czuj = 1;
+		_delay_ms(10);
+		flaga_czuj = 0;
+		mierz();
+	}
+	else{
+		forward(OFFSET_X + MM_NA_KRATKE*labposx_real - (int16_t) par.posx);
+		flaga_czuj = 1;
+		_delay_ms(10);
+		flaga_czuj = 0;
+		mierz();
+		flaga_czuj = 1;
+		_delay_ms(10);
+		flaga_czuj = 0;
+		mierz();
+		flaga_czuj = 1;
+		_delay_ms(10);
+		flaga_czuj = 0;
+		mierz();
+		flaga_czuj = 1;
+		_delay_ms(10);
+		flaga_czuj = 0;
+		mierz();
+	}
 	switch(mouse_dir_real){
 		case RIGHT:
 		labposx_real++;
@@ -37,16 +83,7 @@ void step_forwards_real(void){
 		case DOWN:
 		labposy_real--;
 		break;
-	}
-	if(mouse_dir_real == UP || mouse_dir_real == DOWN){
-		//LcdClear();
-		//LcdDec(par.posy);
-		//Lcd(" ");
-		//Dec(OFFSET_Y + MM_NA_KRATKE*labposy_real);
-		forward(OFFSET_Y + MM_NA_KRATKE*labposy_real - (int16_t) par.posy, 1);
-	}
-	else
-	forward(OFFSET_X + MM_NA_KRATKE*labposx_real - (int16_t) par.posx, 0);
+	}	
 }
 
 void turn_real(uint8_t direction){

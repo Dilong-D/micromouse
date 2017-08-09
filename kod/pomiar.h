@@ -33,6 +33,7 @@
  void kalibruj_poczatek(void);
  void kalibruj_ruchy(void);
  uint8_t kal_count;
+ uint8_t mierz_count;
  
  
  #endif
