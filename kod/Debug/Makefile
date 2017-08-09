@@ -52,16 +52,14 @@ SUBDIRS :=  \
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
 ../algorithms.c \
-../bluetooth.c \
-../rightHand.c \
 ../gyro.c \
 ../hd44780.c \
 ../libs.c \
 ../main.c \
-../NewControl.c \
+../moves.c \
 ../pid.c \
 ../pomiar.c \
-../pos_dir_enc.c \
+../pos_dir_enx.c \
 ../real_alg.c \
 ../src/ASF/common/boards/user_board/init.c
 
@@ -74,61 +72,53 @@ ASM_SRCS +=
 
 OBJS +=  \
 algorithms.o \
-bluetooth.o \
-rightHand.o \
 gyro.o \
 hd44780.o \
 libs.o \
 main.o \
-NewControl.o \
+moves.o \
 pid.o \
 pomiar.o \
-pos_dir_enc.o \
+pos_dir_enx.o \
 real_alg.o \
 src/ASF/common/boards/user_board/init.o
 
 OBJS_AS_ARGS +=  \
 algorithms.o \
-bluetooth.o \
-rightHand.o \
 gyro.o \
 hd44780.o \
 libs.o \
 main.o \
-NewControl.o \
+moves.o \
 pid.o \
 pomiar.o \
-pos_dir_enc.o \
+pos_dir_enx.o \
 real_alg.o \
 src/ASF/common/boards/user_board/init.o
 
 C_DEPS +=  \
 algorithms.d \
-bluetooth.d \
-rightHand.d \
 gyro.d \
 hd44780.d \
 libs.d \
 main.d \
-NewControl.d \
+moves.d \
 pid.d \
 pomiar.d \
-pos_dir_enc.d \
+pos_dir_enx.d \
 real_alg.d \
 src/ASF/common/boards/user_board/init.d
 
 C_DEPS_AS_ARGS +=  \
 algorithms.d \
-bluetooth.d \
-rightHand.d \
 gyro.d \
 hd44780.d \
 libs.d \
 main.d \
-NewControl.d \
+moves.d \
 pid.d \
 pomiar.d \
-pos_dir_enc.d \
+pos_dir_enx.d \
 real_alg.d \
 src/ASF/common/boards/user_board/init.d
 
@@ -169,21 +159,17 @@ LINKER_SCRIPT_DEP+=
 
 
 
-
-
-
-
 ./%.o: .././%.c
 	@echo Building file: $<
-	@echo Invoking: AVR/GNU C Compiler : 5.4.0
-	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -DDEBUG -DBOARD=USER_BOARD -DF_CPU=32000000UL  -I"../common/applications/user_application/user_board/config" -I"../src/ASF/xmega/utils" -I"../src/config" -I"../src/ASF/common/boards" -I"../src/ASF/xmega/utils/preprocessor" -I"../src/ASF/common/utils" -I"../src" -I"../src/ASF/common/boards/user_board" -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\XMEGAA_DFP\1.0.38\include" -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\XMEGAA_DFP\1.1.68\include"  -O1 -fdata-sections -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g3 -Wall -mmcu=atxmega128a3u -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\XMEGAA_DFP\1.1.68\gcc\dev\atxmega128a3u" -c -std=gnu99 -fno-strict-aliasing -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -mrelax -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Invoking: AVR/GNU C Compiler : 4.9.2
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -DDEBUG -DBOARD=USER_BOARD  -I"../common/applications/user_application/user_board/config" -I"../src/ASF/xmega/utils" -I"../src/config" -I"../src/ASF/common/boards" -I"../src/ASF/xmega/utils/preprocessor" -I"../src/ASF/common/utils" -I"../src" -I"../src/ASF/common/boards/user_board" -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\XMEGAA_DFP\1.0.39\include"  -O1 -fdata-sections -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g3 -Wall -mmcu=atxmega128a3u -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\XMEGAA_DFP\1.0.39\gcc\dev\atxmega128a3u" -c -std=gnu99 -fno-strict-aliasing -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -mrelax -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
 	@echo Finished building: $<
 	
 
 src/ASF/common/boards/user_board/%.o: ../src/ASF/common/boards/user_board/%.c
 	@echo Building file: $<
-	@echo Invoking: AVR/GNU C Compiler : 5.4.0
-	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -DDEBUG -DBOARD=USER_BOARD -DF_CPU=32000000UL  -I"../common/applications/user_application/user_board/config" -I"../src/ASF/xmega/utils" -I"../src/config" -I"../src/ASF/common/boards" -I"../src/ASF/xmega/utils/preprocessor" -I"../src/ASF/common/utils" -I"../src" -I"../src/ASF/common/boards/user_board" -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\XMEGAA_DFP\1.0.38\include" -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\XMEGAA_DFP\1.1.68\include"  -O1 -fdata-sections -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g3 -Wall -mmcu=atxmega128a3u -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\XMEGAA_DFP\1.1.68\gcc\dev\atxmega128a3u" -c -std=gnu99 -fno-strict-aliasing -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -mrelax -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Invoking: AVR/GNU C Compiler : 4.9.2
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -DDEBUG -DBOARD=USER_BOARD  -I"../common/applications/user_application/user_board/config" -I"../src/ASF/xmega/utils" -I"../src/config" -I"../src/ASF/common/boards" -I"../src/ASF/xmega/utils/preprocessor" -I"../src/ASF/common/utils" -I"../src" -I"../src/ASF/common/boards/user_board" -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\XMEGAA_DFP\1.0.39\include"  -O1 -fdata-sections -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g3 -Wall -mmcu=atxmega128a3u -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\XMEGAA_DFP\1.0.39\gcc\dev\atxmega128a3u" -c -std=gnu99 -fno-strict-aliasing -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -mrelax -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
 	@echo Finished building: $<
 	
 
@@ -211,8 +197,8 @@ all: $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES)
 
 $(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP) $(LINKER_SCRIPT_DEP)
 	@echo Building target: $@
-	@echo Invoking: AVR/GNU Linker : 5.4.0
-	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE) -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -Wl,-Map="micromouse.map" -Wl,-u,vfprintf -Wl,--start-group -Wl,-lm  -Wl,--end-group -Wl,--gc-sections -mmcu=atxmega128a3u -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\XMEGAA_DFP\1.1.68\gcc\dev\atxmega128a3u" -Wl,--relax  
+	@echo Invoking: AVR/GNU Linker : 4.9.2
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE) -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -Wl,-Map="micromouse.map" -Wl,--start-group -Wl,-lm  -Wl,--end-group -Wl,--gc-sections -mmcu=atxmega128a3u -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\XMEGAA_DFP\1.0.39\gcc\dev\atxmega128a3u" -Wl,--relax  
 	@echo Finished building target: $@
 	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-objcopy.exe" -O ihex -R .eeprom -R .fuse -R .lock -R .signature -R .user_signatures  "micromouse.elf" "micromouse.hex"
 	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-objcopy.exe" -j .eeprom  --set-section-flags=.eeprom=alloc,load --change-section-lma .eeprom=0  --no-change-warnings -O ihex "micromouse.elf" "micromouse.eep" || exit 0

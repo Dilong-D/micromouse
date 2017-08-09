@@ -5,7 +5,7 @@
  * Author : Dominik Markowski, Mateusz Wasala, Jan Zyczkowski, Piotr Papiez, Artur Hadasz
  */ 
 
-#define  F_CPU    32000000UL
+#define  F_CPU    16000000UL
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
@@ -16,12 +16,10 @@
 #include "gyro.h"
 #include "pid.h"
 #include "pos_dir_enc.h"
+#include "moves.h"
 #include "algorithms.h"
 #include "pomiar.h"
 #include "real_alg.h"
-#include "NewControl.h"
-#include "bluetooth.h"
-#include "rightHand.h"
 
 /*
 Opis portów
@@ -41,26 +39,8 @@ B0-B4	-	fototranzystory
 C3-C7-	lcd
 */
 
-float regV_P =6;
-float regV_I =2;//4.5;
-float regV_D =0.48;//1.1;
-//int16_t aktualna_V_8=0;
-//int16_t target_S=0;
+uint8_t set = 0;
 
-float regT_P = 6;
-float regT_I = 2;
-float regT_D = 0.48;
-//int16_t aktualna_T_8=0;
-int indTcc1=0;
-int pred_ch[4];
-int roznica_ch[4];
-int roznica=0;
-int pred=0;
-int k=2000;
-int pomiar=0;
-int wyslij=0;
-int tabsend[1000];
-int pomiary[4][5];
 // Interrupt Service Routine for handling the ADC conversion complete interrupt
 ISR(ADCB_CH0_vect) {
 	adc_result_LD = ADCB.CH0RES;
@@ -76,108 +56,29 @@ ISR(ADCB_CH3_vect) {
 }
 //Przerwanie przycisk dol
 ISR(PORTF_INT0_vect){
-		
+	     //ledYellow();   // wy³¹czenie diody LED 0
+		 
 }
 //Przerwanie przycisk gora
-ISR(PORTF_INT1_vect){	
-	_delay_ms(500);
-	rotateAngle(PI/2);
+ISR(PORTF_INT1_vect){
+	ledYellow();        // wy³¹czenie diody LED 1
+	
+	
 }
-
 ISR(ACA_AC0_vect){
 	PORTF_OUTTGL=PIN7_bm;
 
 }
 
-int16_t roznica_czujnikow;
-int refR=0;
-int refL=0;
 ISR(TCD1_OVF_vect){
-	pomiarr=adcPomiar_RD();
-	pomiarl=adcPomiar_LD();
-	pomiarfr=adcPomiar_RF();
-	pomiarfl=adcPomiar_LF();
-	
-	
-	int i,j;
-	for(i=4;i>0;i--)
-	   for(j=0;j<4;j++)
-	       pomiary[j][i]=pomiary[j][i-1];
-	
-	pomiary[0][0]  =pomiarr;
-	pomiary[1][0]  =pomiarl;
-	pomiary[2][0]  =pomiarfr;
-	pomiary[3][0]  =pomiarfl;
-	
-	stan_T = JAZDA;
-	
-	
-	if(((pomiarr)>100)&&((pomiarl)>100))
-		{
-			roznica_czujnikow=pomiarl-pomiarr;
-			refR=pomiarr;
-			refL=pomiarl;
-		}
-	else if ((pomiarr>100)&&(pomiarl<100) && (pomiarfl+pomiarfr<800))
-	    {
-			roznica_czujnikow=refR-pomiarr;
-		}
-	
-	else if ((pomiarr<100)&&(pomiarl>100) && (pomiarfl+pomiarfr<800))	
-		{
-			roznica_czujnikow=-refL+pomiarl;
-		}
-	else 
-	{ 
-		roznica_czujnikow=0;
-	}
-	
-	
-	
-	if(flaga_czuj==1)
-	{
-		if(roznica_czujnikow>0)
-		    {
-			docelowa_T_8=-10;//roznica_czujnikow/parametrp; minus skreca w lewo
-			target_T=lookup(roznica_czujnikow)*(aktualna_V_8/30)*537.6;
-		    }
-		else if (roznica_czujnikow<0)
-		    {
-			docelowa_T_8=10;//roznica_czujnikow/parametrp;
-			target_T=lookup(roznica_czujnikow)*(aktualna_V_8/30)*537.6;
-		    }
-			else
-			 {
-				 docelowa_T_8=0;
-				 target_T=0;
-			 }
-	}
-	
+	ledGreen();
+	wheel(des_vl, des_vr);
+	get_params_enc();
+
 }
-		
-	int enkl_send=0;
-	int enkr_send=0;
-ISR(TCC1_OVF_vect){
-	//odczyt enkoderow
-	enkl = L_ENKODER;
-	enkr = R_ENKODER;
-	L_ENKODER=0;
-	R_ENKODER=0;
-	enkl = - enkl;
-	if(enkl > 30000)
-		enkl = enkl -65536;
-	if(enkr > 30000)
-		enkr =enkr- 65536;
-	//predkosc i roznica
-	roznica=enkl-enkr;
-	pred=enkl+enkr;
-	
-	go(regV_P,regV_I,regV_D,pred, regT_P, regT_I, regT_D, roznica,enkl,enkr);
-	
-	
-	////pozycja
-	par=get_params_enc(enkl,enkr,par);
-}
+//ISR(TCC1_OVF_vect){
+	//
+//}
 
 ISR(OSC_OSCF_vect) {									// przerwanie w razie awarii oscylatora
 	OSC.XOSCFAIL	|=	OSC_XOSCFDIF_bm;				// kasowanie flagi przerwania
@@ -188,14 +89,183 @@ ISR(OSC_OSCF_vect) {									// przerwanie w razie awarii oscylatora
 
 
 
-
-
-
-
 int main(void) {
 
-	prestartSetUp();
-	rightHandStart();
+	int i;
+	int c2;
+	setall();
+	
+	
+	Lcd("Hello");
+	par.dir = 0;//3*PI/2;
+	par.posx = 45;
+	par.posy = 45;
+	pid_init(8.33, 24.5760, 4.0960, 8.57, 25.2988,4.2165);
+	_delay_ms(1000);
+	initLab();
+	
+	new_wall_discovered = 1;
+	labposx_real = 0;
+	labposy_real = 0;
+	mouse_dir_real = RIGHT;
+	/*
+	des_vl = 5;
+	des_vr = 5;
+	
+	for(i = 0; i < 10; i++){
+		_delay_ms(500);
+		LcdClear();
+		LcdDec(-L_ENKODER);
+		Lcd(" ");
+		LcdDec(R_ENKODER);
+	}
+	*/
+
+//	turn_real(RIGHT);
+//	_delay_ms(1000);
+	/*LcdClear();
+	LcdDec()*/
+//	forward(90, 1);
+	//return;
+		
+		//_delay_ms(3000);
+		//rotateAngle(-PI/2);
+		//_delay_ms(500);
+		//rotateAngle(-PI/2);
+		//_delay_ms(500);
+		//rotateAngle(PI/2);
+		//_delay_ms(500);
+		//rotateAngle(PI/2);
+		//_delay_ms(500);
+		//
+		//LcdDec((int)abs2(par.dir*1000));
+		
+		//_delay_ms(3000);
+		//forward(200,1);   
+		//_delay_ms(500);   
+		//rotateAngle(PI/2);                                                                                                                                                   
+		//_delay_ms(500);
+		//forward(400,1);
+		//_delay_ms(500);
+		//rotateAngle(-PI/2);		
+		//_delay_ms(500);
+		//forward(600,1);
+		//_delay_ms(500);
+		//forward(800,1);
+		//_delay_ms(500);
+		//rotateAngle(PI/2);
+		//_delay_ms(500);
+		//forward(1000,1);
+		//_delay_ms(500);
+		//rotateAngle(PI/2);
+		
+		//forward(500,1);
+		//rotateAngle(PI/2);
+		///forward(500,0);
+		//rotateAngle(-PI/2);
+		//forward(500,1);
+
+		
+		
+		//LcdDec((int)abs2(par.posy));
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		                                                                                                                                                                 
+		
+		
+		// AH
+		_delay_ms(3000);
+		kalibruj_poczatek();
+		
+		mierz();
+		LcdClear();
+		Lcd("t");
+		LcdDec(labyrinth[labposx_real][labposy_real]);
+		Lcd(" n");
+		LcdDec(labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]);
+		Lcd(" T");
+		LcdDec(discovered[labposx_real][labposy_real]);
+		Lcd(" T");
+		LcdDec(discovered[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]);
+		Lcd2;
+		LcdDec(par.posx);
+		Lcd("");
+		LcdDec(par.posy);
+		Lcd("");
+		LcdDec(par.dir);
+		
+		set = 1;
+		
+	while(1){
+		
+		_delay_ms(2000);
+		LcdClear();
+		Lcd("t");
+		LcdDec(labyrinth[labposx_real][labposy_real]);
+		Lcd(" n");
+		LcdDec(labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]);
+		Lcd(" T");
+		LcdDec(discovered[labposx_real][labposy_real]);
+		Lcd(" T");
+		LcdDec(discovered[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]);
+		Lcd2;
+		LcdDec(par.posx);
+		Lcd(" ");
+		LcdDec(par.posy);
+		Lcd(" ");
+		if(par.dir >= 0)
+			LcdDec(360 * par.dir/(2*PI));
+		else
+			LcdDec(360 * par.dir/(2*PI));
+			
+		Lcd(" C: ");
+		LcdDec(com);
+		
+		uint8_t res;
+		res = action();
+		if(res == 1){
+			LcdClear();
+			Lcd("Zla liczba");
+			return;
+		}
+		if(res == 2){
+			LcdClear();
+			Lcd("Blad czujnikow");
+		} 
+		
+		
+		 //adcPomiar_RF();
+		 //Lcd2;
+		 //adcPomiar_LF();
+		//_delay_ms(1000);
+/*	LcdDec (discovered[0][1]);
+	Lcd(" ");
+	LcdDec (discovered[1][1]);
+	Lcd("  ");
+	LcdDec (labyrinth[0][1]);
+	Lcd(" ");
+	LcdDec (labyrinth[1][1]);
+	
+	Lcd2;
+	LcdDec (discovered[0][0]);
+	Lcd(" ");
+	LcdDec (discovered[1][0]);
+	Lcd("  ");
+	LcdDec (labyrinth[0][0]);
+	Lcd(" ");
+	LcdDec (labyrinth[1][0]);*/
+//	_delay_ms(1000);
+		//LcdClear();	
+		_delay_ms(1);
+		
+		}
+		
 	
 }
-

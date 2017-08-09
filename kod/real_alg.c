@@ -1,5 +1,5 @@
 #include "real_alg.h"
-#include "bluetooth.h"
+
 //Licznik uzywany do ustalenia aktualnego etapu kroku
 uint8_t nst = 2;
 
@@ -7,15 +7,14 @@ uint8_t nst = 2;
 /**
 * Funkcja wywolywane przez main do wykonania nastepnej czynnosci
 */
-int action(void){
+int action(){
 	if(nst == 2){
 		com = getNextAction();
-		send_uint16(12);
 		nst = 0;
 		return 0;
-	} else {
-	//	kalibruj();
-		//kal_count++;
+		} else {
+		kalibruj();
+		kal_count++;
 		return move_real();
 	}
 }
@@ -23,7 +22,7 @@ int action(void){
 /**
 Krok do przodu w rzeczywistosci
 */
-void step_forwards_real(void){
+void step_forwards_real(){
 	switch(mouse_dir_real){
 		case RIGHT:
 		labposx_real++;
@@ -38,93 +37,88 @@ void step_forwards_real(void){
 		labposy_real--;
 		break;
 	}
-	if(mouse_dir_real == UP ){
-		forward(((float) OFFSET_Y + MM_NA_KRATKE*labposy_real) - par.posy);
+	if(mouse_dir_real == UP || mouse_dir_real == DOWN){
+		//LcdClear();
+		//LcdDec(par.posy);
+		//Lcd(" ");
+		//
+		//Dec(OFFSET_Y + MM_NA_KRATKE*labposy_real);
+		forward((float) OFFSET_Y + MM_NA_KRATKE*labposy_real, 1);
 	}
-	if(mouse_dir_real == DOWN){
-		forward(par.posy - ((float) OFFSET_Y + MM_NA_KRATKE*labposy_real));
-	}
-	if(mouse_dir_real == RIGHT){
-		forward(((float) OFFSET_X + MM_NA_KRATKE*labposx_real) - par.posx);
-	}
-	if(mouse_dir_real == LEFT){
-		forward(par.posx - ((float) OFFSET_X + MM_NA_KRATKE*labposx_real));
-	}
+	else
+	forward((float) OFFSET_X + MM_NA_KRATKE*labposx_real, 0);
 }
-//direction DOWN oznacza zawrocenie
+
 void turn_real(uint8_t direction){
 	float rot;
 	if(direction == RIGHT){
 		switch(mouse_dir_real){
-			rotateAngle(PI/2);
-			//case UP:
-				//mouse_dir_real = RIGHT;
-				//if(par.dir < PI){
-					//rot = -(-PI/2 - par.dir);
-					//rotateAngle(-(-PI/2 - par.dir));
-				//}
-				//else{
-					//rot = -(-PI/2 + (2 * PI - par.dir));
-					//rotateAngle(-(-PI/2 + (2 * PI - par.dir)));
-				//}
-				//
-				//break;
-			//case DOWN:
-				//mouse_dir_real = LEFT;
-				//rot = -(-PI/2 + (PI - par.dir));
-				//rotateAngle(-(-PI/2 + (PI - par.dir)));
-				//break;
-			//case RIGHT:
-				//mouse_dir_real = DOWN;
-				//rot = -(-PI/2 + (3*PI/2 - par.dir));
-				//rotateAngle(-(-PI/2 + (3*PI/2 - par.dir)));
-				//break;
-			//case LEFT:
-				//mouse_dir_real = UP;
-				//rot = -(-PI/2 + (PI/2 - par.dir));
-				//rotateAngle(-(-PI/2 + (PI/2 - par.dir)));
-				//break;
+			case UP:
+			mouse_dir_real = RIGHT;
+			if(par.dir < PI){
+				rot = -(-PI/2 - par.dir);
+				rotateAngle(-(-PI/2 - par.dir));
+			}
+			else{
+				rot = -(-PI/2 + (2 * PI - par.dir));
+				rotateAngle(-(-PI/2 + (2 * PI - par.dir)));
+			}
+			
+			break;
+			case DOWN:
+			mouse_dir_real = LEFT;
+			rot = -(-PI/2 + (PI - par.dir));
+			rotateAngle(-(-PI/2 + (PI - par.dir)));
+			break;
+			case RIGHT:
+			mouse_dir_real = DOWN;
+			rot = -(-PI/2 + (3*PI/2 - par.dir));
+			rotateAngle(-(-PI/2 + (3*PI/2 - par.dir)));
+			break;
+			case LEFT:
+			mouse_dir_real = UP;
+			rot = -(-PI/2 + (PI/2 - par.dir));
+			rotateAngle(-(-PI/2 + (PI/2 - par.dir)));
+			break;
 		}
 		//LcdClear();
 		//Lcd("Right ");
 		//LcdDec(rot*360/(2*PI));
 	}
 	else if(direction == LEFT){
-		rotateAngle(-PI/2);
-		//switch(mouse_dir_real){
-			//case UP:
-			//mouse_dir_real = LEFT;
-			//if(par.dir < PI){
-				//rotateAngle(-(PI/2 - par.dir));
-				//rot = -(PI/2 - par.dir);
-			//}
-			//else{
-				//rotateAngle(-(PI/2 + (2 * PI - par.dir)));
-				//rot = (-(PI/2 + (2 * PI - par.dir)));
-			//}
-			//
-			//break;
-			//case DOWN:
-			//mouse_dir_real = RIGHT;
-			//rotateAngle(-(PI/2 + (PI - par.dir)));
-			//rot = (-(PI/2 + (PI - par.dir)));
-			//break;
-			//case RIGHT:
-			//mouse_dir_real = UP;
-			//rot = (-(PI/2 + (3*PI/2 - par.dir)));
-			//rotateAngle(-(PI/2 + (3*PI/2 - par.dir)));
-			//break;
-			//case LEFT:
-			//mouse_dir_real = DOWN;
-			//rot = (-(PI/2 + (PI/2 - par.dir)));
-			//rotateAngle(-(PI/2 + (PI/2 - par.dir)));
-		//}
-		////LcdClear();
-		////Lcd("LEFT ");
-		////LcdDec(-rot*360/(2*PI));
+		switch(mouse_dir_real){
+			case UP:
+			mouse_dir_real = LEFT;
+			if(par.dir < PI){
+				rotateAngle(-(PI/2 - par.dir));
+				rot = -(PI/2 - par.dir);
+			}
+			else{
+				rotateAngle(-(PI/2 + (2 * PI - par.dir)));
+				rot = (-(PI/2 + (2 * PI - par.dir)));
+			}
+			
+			break;
+			case DOWN:
+			mouse_dir_real = RIGHT;
+			rotateAngle(-(PI/2 + (PI - par.dir)));
+			rot = (-(PI/2 + (PI - par.dir)));
+			break;
+			case RIGHT:
+			mouse_dir_real = UP;
+			rot = (-(PI/2 + (3*PI/2 - par.dir)));
+			rotateAngle(-(PI/2 + (3*PI/2 - par.dir)));
+			break;
+			case LEFT:
+			mouse_dir_real = DOWN;
+			rot = (-(PI/2 + (PI/2 - par.dir)));
+			rotateAngle(-(PI/2 + (PI/2 - par.dir)));
+		}
+		//LcdClear();
+		//Lcd("LEFT ");
+		//LcdDec(-rot*360/(2*PI));
 		
-	} else if(direction == DOWN)
-		rotateAngle(PI);
+	}
 	if(par.dir >= 2*PI)
 	par.dir -= 2*PI;
 	
@@ -132,33 +126,34 @@ void turn_real(uint8_t direction){
 	par.dir += 2*PI;
 }
 
-uint8_t move_real(void){
+uint8_t move_real(){
 	switch (com){
 		case 5:
-			if(nst == 0){
-				turn_real(DOWN);
-			}
-			else
-				step_forwards_real();
-			break;
+		if(nst == 0){
+			turn_real(LEFT);
+			turn_real(LEFT);
+		}
+		else
+		step_forwards_real();
+		break;
 		case 6:
-			if(nst == 0)
-				turn_real(LEFT);
-			else
-			step_forwards_real();
-			break;
+		if(nst == 0)
+		turn_real(LEFT);
+		else
+		step_forwards_real();
+		break;
 		case 7:
-			if(nst == 0)
-				turn_real(RIGHT);
-			else
-				step_forwards_real();
-				break;
+		if(nst == 0)
+		turn_real(RIGHT);
+		else
+		step_forwards_real();
+		break;
 		case 8:
-			step_forwards_real();
-			nst = 1;
-			break;
+		step_forwards_real();
+		nst = 1;
+		break;
 		default:
-			return 1;
+		return 1;
 		
 	}
 	if(mierz() == -1){

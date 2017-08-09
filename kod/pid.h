@@ -28,5 +28,6 @@ void l_wheel(float v);
 void r_wheel(float v);
 void wheel(float vl, float vr);
 
-
+int itab;
+float tab[1000];
 #endif /* PID_H_ */
