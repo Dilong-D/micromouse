@@ -43,10 +43,10 @@ void step_forwards_real(void){
 		//LcdDec(par.posy);
 		//Lcd(" ");
 		//Dec(OFFSET_Y + MM_NA_KRATKE*labposy_real);
-		forward(OFFSET_Y + MM_NA_KRATKE*labposy_real - (int16_t) par.posy, 1);
+		forward(OFFSET_Y + MM_NA_KRATKE*labposy_real - (int16_t) par.posy);
 	}
 	else
-	forward(OFFSET_X + MM_NA_KRATKE*labposx_real - (int16_t) par.posx, 0);
+	forward(OFFSET_X + MM_NA_KRATKE*labposx_real - (int16_t) par.posx);
 }
 
 void turn_real(uint8_t direction){
@@ -129,29 +129,30 @@ void turn_real(uint8_t direction){
 uint8_t move_real(void){
 	switch (com){
 		case 5:
-		if(nst == 0){
-			turn_real(LEFT);
-			turn_real(LEFT);
-		}
-		else
-		step_forwards_real();
-		break;
+			if(nst == 0){
+				turn_real(LEFT);
+				turn_real(LEFT);
+			}
+			else
+				step_forwards_real();
+			break;
 		case 6:
-		if(nst == 0)
-		turn_real(LEFT);
-		else
-		step_forwards_real();
-		break;
+			if(nst == 0)
+				turn_real(LEFT);
+			else
+				step_forwards_real();
+			break;
+		
 		case 7:
-		if(nst == 0)
-		turn_real(RIGHT);
-		else
-		step_forwards_real();
-		break;
+			if(nst == 0)
+				turn_real(RIGHT);
+			else
+				step_forwards_real();
+			break;
 		case 8:
-		step_forwards_real();
-		nst = 1;
-		break;
+			step_forwards_real();
+			nst = 1;
+			break;
 		default:
 		return 1;
 		

@@ -111,31 +111,6 @@ short turn2(short direction){
 		
 		
 		
-		/*
-		
-		discovered[0][0]=1;
-		labyrinth[0][0]=14;
-		LcdDec (discovered[0][1]);
-		Lcd(" ");
-		LcdDec (discovered[1][1]);
-		Lcd("  ");
-		LcdDec (labyrinth[0][1]);
-		Lcd(" ");
-		LcdDec (labyrinth[1][1]);
-		
-		Lcd2;
-		LcdDec (discovered[0][0]);
-		Lcd(" ");
-		LcdDec (discovered[1][0]);
-		Lcd("  ");
-		LcdDec (labyrinth[0][0]);
-		Lcd(" ");
-		LcdDec (labyrinth[1][0]);
-		_delay_ms(1000);
-	
-	
-	
-	*/
 	
 	
 	
@@ -146,249 +121,231 @@ short turn2(short direction){
 		// 1  - dobry pomiar
 		// 0  - brak pomiaru
 		// -1 - blad
-		
+
 		{
-			
-		
-		
-		
-		
+	
 		int16_t discaverdcounter=0; // zlicza czy pole juz jest discaverd (przy discaverdcounter==3)
 		 int16_t debRF;
 		 int16_t debLF;
 		 int16_t debRD;
 		 int16_t debLD;
 		
-			debLD=debancer(adcPomiar_LD(),adcPomiar_LD(),adcPomiar_LD());  // pomiar LD
-			
-		debRD=debancer(adcPomiar_RD(),adcPomiar_RD(),adcPomiar_RD());  // pomiar RD
-			_delay_ms(1);
-		debRF=debancer(adcPomiar_RF(),adcPomiar_RF(),adcPomiar_RF());  // pomiar RF
-			_delay_ms(1);
-		debLF=debancer(adcPomiar_LF(),adcPomiar_LF(),adcPomiar_LF());  // pomiar LF
-			_delay_ms(1);	
-	
 		
-		if(((debLF!=0)&&(debRF!=0))&&(discovered[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]==0))
-		{
+		if (adcPomiar_LD()<LDprog) pomiartable[mierz_count][0]=0 //zapis do tabeli pomiarow
+		else pomiartable[mierz_count][0]=1;
+		if (adcPomiar_RD()<RDprog) pomiartable[mierz_count][1]=0
+		else pomiartable[mierz_count][1]=1;
+		if (adcPomiar_LF()<LFprog) pomiartable[mierz_count][2]=0
+		else pomiartable[mierz_count][2]=1;
+		if (adcPomiar_RF()<RFprog) pomiartable[mierz_count][3]=0
+		else pomiartable[mierz_count][3]=1;
+		
+		//debLD=adcPomiar_LD();//debancer(adcPomiar_LD(),adcPomiar_LD(),adcPomiar_LD());  // pomiar LD
+		//debRD=adcPomiar_RD();///debancer(adcPomiar_RD(),adcPomiar_RD(),adcPomiar_RD());  // pomiar RD
+		//debRF=adcPomiar_RF();//debancer(adcPomiar_RF(),adcPomiar_RF(),adcPomiar_RF());  // pomiar RF
+		//debLF=adcPomiar_LF();//debancer(adcPomiar_LF(),adcPomiar_LF(),adcPomiar_LF());  // pomiar LF
+		
+	    mierz_count++;
+		
+		if (mierz_count==5)
+		{ 
+			//trzeba dopisac sprawdzanie czy jest wiecej 0 czy jedynek. Mozna nie robic tabeli tylko zmienna ktora bedziemy inkrementowali
+			
+			
+			mierz_count=0;
+			
+			
+			if(((debLF!=0)&&(debRF!=0))&&(discovered[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]==0))
+			{
 			
 
-		//------------------------------------------------------------------------------------------------------------------------------------------RD	
-		if(debRD==-1) 
-		return (-1);
-		else if(debRD==0)
-		
-			{
-			//if(labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]&turn(RIGHT)==turn(RIGHT))
-			// ;
-			// else
-				 {	 
-					labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]&=(~turn2(RIGHT));
-					
-					discaverdcounter++;
-				 }
-			}
-			
-		
-		
-	    else if(debRD==1) 
-         {   //if(labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]&turn2(RIGHT)==turn2(RIGHT))
-			 //;
-			 //else
-			 {
-				 
-			 
-				labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]|=turn2(RIGHT);    
-				discaverdcounter++;
-						 
-			}			 
-		 }
-		
-		
-		
-		//------------------------------------------------------------------------------------------------------------------------------------------RF i LF
-		
-		
-		
-		
-		
-			if(((debRF==-1)||(debRF==-1))|| (debRF!=debLF))
+			//------------------------------------------------------------------------------------------------------------------------------------------RD	
+			if(debRD==-1) 
 			return (-1);
-			else if(debRF==0)
-			{
-				// if(labyrinth[labposx_real][labposy_real]&mouse_dir_real)
+			else if(debRD==0)
+		
+				{
+				//if(labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]&turn(RIGHT)==turn(RIGHT))
 				// ;
 				// else
-				
-				labyrinth[labposx_real][labposy_real]&=(~mouse_dir_real);
-				
-			}
+					 {	 
+						labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]&=(~turn2(RIGHT));
+					
+						discaverdcounter++;
+					 }
+				}
 			
-			else if(debRF==1)
+		
+		
+			else if(debRD==1) 
+			 {   //if(labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]&turn2(RIGHT)==turn2(RIGHT))
+				 //;
+				 //else
+				 {
+				 
+			 
+					labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]|=turn2(RIGHT);    
+					discaverdcounter++;
+						 
+				}			 
+			 }
+		
+		
+		
+			//------------------------------------------------------------------------------------------------------------------------------------------RF i LF
+		
+		
+		
+		
+		
+				if(((debRF==-1)||(debRF==-1))|| (debRF!=debLF))
+				return (-1);
+				else if(debRF==0)
+				{
+					// if(labyrinth[labposx_real][labposy_real]&mouse_dir_real)
+					// ;
+					// else
+				
+					labyrinth[labposx_real][labposy_real]&=(~mouse_dir_real);
+				
+				}
+			
+				else if(debRF==1)
+				{// if(labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_x( mouse_dir_real)]&mouse_dir_real)
+					// ;
+					// else
+				
+					labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]&=(~mouse_dir_real);
+					discaverdcounter++;
+			
+				
+				
+				}
+				else if(debRF==2) 
+				{// if(labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_x( mouse_dir_real)47]&mouse_dir_real)
+					// ;
+					// else
+			
+					labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]|=(mouse_dir_real);
+					discaverdcounter++;
+				
+				}
+			
+			/*
+			//------------------------------------------------------------------------------------------------------------------------------------------LF
+		
+		
+		
+
+			if(debLF==-1) ;
+			//return (-1)
+			else if(debLF==0)
+			
+						{
+							// if(labyrinth[labposx_real][labposy_real]&mouse_dir_real)
+							// ;
+							// else
+			
+						labyrinth[labposx_real][labposy_real]&=(~mouse_dir_real);
+						discovered[labposx_real][labposy_real]=1;
+						discaverdcounter++;
+					
+						}
+			
+			else if(debLF==1)
 			{// if(labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_x( mouse_dir_real)]&mouse_dir_real)
 				// ;
 				// else
-				
+			
 				labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]&=(~mouse_dir_real);
 				discaverdcounter++;
 			
+			
+			} 
+			else if(debLF==2) ;
+				{// if(labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_x( mouse_dir_real)47]&mouse_dir_real)
+					// ;
+					// else
 				
-				
-			}
-			else if(debRF==2) 
-			{// if(labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_x( mouse_dir_real)47]&mouse_dir_real)
-				// ;
-				// else
-			
-				labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]|=(mouse_dir_real);
-				discaverdcounter++;
-				
-			}
-			
-		/*
-		//------------------------------------------------------------------------------------------------------------------------------------------LF
-		
-		
-		
-
-		if(debLF==-1) ;
-		//return (-1)
-		else if(debLF==0)
-			
-					{
-						// if(labyrinth[labposx_real][labposy_real]&mouse_dir_real)
-						// ;
-						// else
-			
-					labyrinth[labposx_real][labposy_real]&=(~mouse_dir_real);
-					discovered[labposx_real][labposy_real]=1;
+					labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]&=(mouse_dir_real);
 					discaverdcounter++;
-					
-					}
-			
-		else if(debLF==1)
-		{// if(labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_x( mouse_dir_real)]&mouse_dir_real)
-			// ;
-			// else
-			
-			labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]&=(~mouse_dir_real);
-			discaverdcounter++;
-			
-			
-		} 
-		else if(debLF==2) ;
-			{// if(labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_x( mouse_dir_real)47]&mouse_dir_real)
+				
+				}
+	   
+	   
+	   
+		   */
+				//------------------------------------------------------------------------------------------------------------------------------------------LD
+			if(debLD==-1) 
+			return (-1);
+			else if(debLD==0)
+			{
+				// if(labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]&turn(LEFT)==turn(LEFT))
 				// ;
 				// else
+				{
+					labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]&=(~turn2(LEFT));
+					discaverdcounter++;
 				
-				labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]&=(mouse_dir_real);
-				discaverdcounter++;
+				}
+			}
+		
+			else if(debLD==1)
+			{  // if(labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]&turn2(LEFT)==turn2(LEFT))
+				//;
+			//	else
+				//{
+				
+				
+					labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]|=(turn2(LEFT));
+				
+					discaverdcounter++;
 				
 			}
-	   
-	   
-	   
-	   */
-			//------------------------------------------------------------------------------------------------------------------------------------------LD
-		if(debLD==-1) 
-		return (-1);
-		else if(debLD==0)
-		{
-			// if(labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]&turn(LEFT)==turn(LEFT))
-			// ;
-			// else
-			{
-				labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]&=(~turn2(LEFT));
-				discaverdcounter++;
-				
 			}
-		}
-		
-		else if(debLD==1)
-		{  // if(labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]&turn2(LEFT)==turn2(LEFT))
-			//;
-		//	else
-			//{
-				
-				
-				labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]|=(turn2(LEFT));
-				
-				discaverdcounter++;
-				
-		}
-		}
-		else
+			else
 		
 		
-		{   
-			/*
-		 	LcdDec (discovered[0][1]);
-		 	Lcd(" ");
-		 	LcdDec (discovered[1][1]);
-		 	Lcd("  ");
-		 	LcdDec (labyrinth[0][1]);
-		 	Lcd(" ");
-		 	LcdDec (labyrinth[1][1]);
+			{   
+				/*
+		 		LcdDec (discovered[0][1]);
+		 		Lcd(" ");
+		 		LcdDec (discovered[1][1]);
+		 		Lcd("  ");
+		 		LcdDec (labyrinth[0][1]);
+		 		Lcd(" ");
+		 		LcdDec (labyrinth[1][1]);
 		 	
-		 	Lcd2;
-		 	LcdDec (discovered[0][0]);
-		 	Lcd(" ");
-		 	LcdDec (discovered[1][0]);
-		 	Lcd("  ");
-		 	LcdDec (labyrinth[0][0]);
-		 	Lcd(" ");
-		 	LcdDec (labyrinth[1][0]);
-		 	_delay_ms(1000);
-		 *//*
-		 Lcd2;
-		 Lcd("pomiar niepotrzebny ");*/
-		 return 0;
+		 		Lcd2;
+		 		LcdDec (discovered[0][0]);
+		 		Lcd(" ");
+		 		LcdDec (discovered[1][0]);
+		 		Lcd("  ");
+		 		LcdDec (labyrinth[0][0]);
+		 		Lcd(" ");
+		 		LcdDec (labyrinth[1][0]);
+		 		_delay_ms(1000);
+			 *//*
+			 Lcd2;
+			 Lcd("pomiar niepotrzebny ");*/
+			 return 0;
 		 
-		}
-		
-				if (discaverdcounter==3)
-						if(discovered[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]==0)
-							{labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]|= turn2(INVERS) ;
-							new_wall_discovered=1;
-							discovered[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]=1;
-					/*	Lcd2;
-					Lcd("z ");
-					LcdDec (labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]);
-					Lcd(" ");	
-					LcdDec(labposx_real+mouse_dir_x( mouse_dir_real));
-					Lcd(" ");
-					LcdDec(labposy_real+mouse_dir_y( mouse_dir_real));*/
-						
-					/*	
-					LcdDec (discovered[0][1]);
-					Lcd(" ");
-					LcdDec (discovered[1][1]);
-					Lcd("  ");
-					LcdDec (labyrinth[0][1]);
-					Lcd(" ");
-					LcdDec (labyrinth[1][1]);
-					
-					Lcd2;
-					LcdDec (discovered[0][0]);
-					Lcd(" ");
-					LcdDec (discovered[1][0]);
-					Lcd("  ");
-					LcdDec (labyrinth[0][0]);
-					Lcd(" ");
-					LcdDec (labyrinth[1][0]);
-					_delay_ms(1000);
-					*/
-		
-		
-					 return 1;
-
-	
-	
-	   
 			}
-	return(-1);
+		
+					if (discaverdcounter==3)
+							if(discovered[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]==0)
+								{labyrinth[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]|= turn2(INVERS) ;
+								new_wall_discovered=1;
+								discovered[labposx_real+mouse_dir_x( mouse_dir_real)][labposy_real+mouse_dir_y( mouse_dir_real)]=1;
+						        return 1;
+								}
+		  }
+	           return 1;
+	   
+				
+return(-1);
 
-		}
+	}
 	
 
 void kalibruj_ruchy(void)
