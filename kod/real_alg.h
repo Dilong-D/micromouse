@@ -6,16 +6,16 @@
 #define OFFSET_X 90
 #define OFFSET_Y 90
 
-#include "moves.h"
+#include "NewControl.h"
 #include "algorithms.h"
 #include "libs.h"
 #include "pomiar.h"
 #include "pos_dir_enc.h"
 
-int action();
-void step_forwards_real();
+int action(void);
+void step_forwards_real(void);
 void turn_real(uint8_t direction);
-uint8_t move_real();
+uint8_t move_real(void);
 
 
 //Zadanie do wykonania
