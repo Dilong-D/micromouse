@@ -195,7 +195,13 @@ ISR(OSC_OSCF_vect) {									// przerwanie w razie awarii oscylatora
 int main(void) {
 
 	prestartSetUp();
-	rightHandStart();
-	
+	//rightHandStart();
+	int i =0;
+	while(1)
+	{		
+		i++;
+		send_char("i");
+		_delay_ms(1000);
+	}
 }
 
