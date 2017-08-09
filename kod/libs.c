@@ -173,7 +173,7 @@ uint16_t adcPomiar_LF(void){//pomiar adc lD
 	if(wynik>30000) wynik =0;
 	return wynik;
 }
-uint16_t adcPomiar_LD(void){ //pomiar adc LF
+uint16_t   (void){ //pomiar adc LF
 	uint16_t roznicowe;
 	uint16_t b [10];
 	uint16_t i=0;

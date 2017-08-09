@@ -33,6 +33,11 @@
  void kalibruj_poczatek(void);
  void kalibruj_ruchy(void);
  uint8_t kal_count;
- 
+ uint8_t mierz_count;
+ uint8_t  pomiartable[4][5];
+ uint8_t LDprog=1000;
+ uint8_t RDprog=1000;
+ uint8_t RFprog=1000;
+ uint8_t LFprog=1000;
  
  #endif

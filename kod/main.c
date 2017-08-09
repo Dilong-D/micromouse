@@ -181,8 +181,8 @@ ISR(TCC1_OVF_vect){
 
 ISR(OSC_OSCF_vect) {									// przerwanie w razie awarii oscylatora
 	OSC.XOSCFAIL	|=	OSC_XOSCFDIF_bm;				// kasowanie flagi przerwania
-	LcdClear();
-	Lcd("Awaria!");
+	//LcdClear();
+	//Lcd("Awaria!");
 	_delay_ms(1000);
 }
 

@@ -388,6 +388,8 @@ void prestartSetUp(){
 		par.gyr=0;
 		enkl=0;
 		enkr=0;
+		mierz_counter=0;
+		
 }
 
 
