@@ -49,19 +49,19 @@
 
 
 
-void initLab(void);
-void step_forwards(void);
+void initLab();
+void step_forwards();
 void turn(uint8_t);
-uint8_t wall_on_left(void);
-uint8_t wall_in_front(void);
-void hand_on_wall_step(void);
+uint8_t wall_on_left();
+uint8_t wall_in_front();
+void hand_on_wall_step();
 uint8_t is_junction(uint8_t, uint8_t);
 uint8_t first_dir(uint8_t);
-void tremaux_step(void);
+void tremaux_step();
 int flood_fill_algorithm(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
 uint8_t flood_fill_loc_step(uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
-void algStep(void);
-uint8_t getNextAction(void);
+void algStep();
+uint8_t getNextAction();
 
 
 

@@ -18,7 +18,7 @@
 #ifndef HD44780_H_
 #define HD44780_H_
 
-#define F_CPU 32000000UL
+#define F_CPU 16000000UL
 
 
 #include <avr/io.h>
@@ -93,8 +93,6 @@
 //
 //-------------------------------------------------------------------------------------------------
 
-void _lcd_OutNibble(unsigned char nibbleToWrite);
-void _lcd_Write(unsigned char dataToWrite);
 void LcdCommand(unsigned char commandToWrite);
 void LcdData(unsigned char data);
 void LcdWrite(char * text);

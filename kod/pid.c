@@ -67,7 +67,13 @@ void wheel(float vl, float vr){
 	old_enk_r = enkr;
 	
 	
-
+	if(itab < 1000)
+	{
+		if(vl > 0.1){
+		tab[itab] = vl;
+			++itab;
+		}
+	}
 	
 	
 	float ul,ur;
@@ -78,12 +84,12 @@ void wheel(float vl, float vr){
 	//l = 2*L_ENKODER - R_ENKODER;
 	if(vl == 0){
 		
-		//ul = 0;
-		//TCD0.CCA		=	100;
-		//PORTD.OUTSET	=	PIN1_bm;//input 1->1
-		//PORTD.OUTSET	=	PIN2_bm;//input 2->1
-		pid_params2.err_sum = 0;
-		pid_params2.err_last = 0;
+		ul = 0;
+		TCD0.CCA		=	100;
+		PORTD.OUTSET	=	PIN1_bm;//input 1->1
+		PORTD.OUTSET	=	PIN2_bm;//input 2->1
+		pid_params2.err_sum;
+		pid_params2.err_last;
 	}
 	else{
 		ul = pid_calculate(vl, enkl,&pid_params2);
@@ -92,29 +98,29 @@ void wheel(float vl, float vr){
 	//r = 2*R_ENKODER - L_ENKODER;
 	if(vr == 0){
 		
-// 		ur = 0;
-// 		TCD0.CCD		=	100;
-// 		PORTD.OUTSET	=	PIN5_bm;//input 1->1
-// 		PORTD.OUTSET	=	PIN4_bm;//input 2->1
-		pid_params.err_sum = 0;
-		pid_params.err_last = 0;
+		ur = 0;
+		TCD0.CCD		=	100;
+		PORTD.OUTSET	=	PIN5_bm;//input 1->1
+		PORTD.OUTSET	=	PIN4_bm;//input 2->1
+		pid_params.err_sum;
+		pid_params.err_last;
 	}
 	else{
 		ur = pid_calculate(vr, enkr,&pid_params);
 	}
 	//if(vr != 0){
 		if(ul >= 0)
-			motorL(ul,LEWO);
+			runL(ul,LEWO);
 	
 		else 
-			motorL(-ul,PRAWO);
+			runL(-ul,PRAWO);
 	
 	
 	if(ur >= 0)
-		motorR(ur,PRAWO);
+		runR(ur,PRAWO);
 	
 	else 
-		motorR(-ur,LEWO);
+		runR(-ur,LEWO);
 	
 	
 	

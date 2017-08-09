@@ -4,10 +4,6 @@
 
 algorithms.c
 
-bluetooth.c
-
-rightHand.c
-
 gyro.c
 
 hd44780.c
@@ -16,13 +12,13 @@ libs.c
 
 main.c
 
-NewControl.c
+moves.c
 
 pid.c
 
 pomiar.c
 
-pos_dir_enc.c
+pos_dir_enx.c
 
 real_alg.c
 
