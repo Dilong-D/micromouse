@@ -21,14 +21,18 @@
 
 
 
- 
- 
+ short kali_obrot;
+ float des_vl;
+ float des_vr;
+ short kalibracja;
  short turn2(short direction);
  int16_t mouse_dir_x(short dir);
  int16_t mouse_dir_y(short dir);
  int16_t mierz (void);
- 
- 
+ void kalibruj(void);
+ void kalibruj_poczatek(void);
+ void kalibruj_ruchy(void);
+ uint8_t kal_count;
  
  
  #endif

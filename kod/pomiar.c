@@ -12,7 +12,8 @@
 #include "pomiar.h"
 #include "algorithms.h"
 #include "libs.h"
-
+#include "pos_dir_enc.h"
+#include "NewControl.h"
  
 	
 short turn2(short direction){
@@ -389,3 +390,218 @@ short turn2(short direction){
 
 		}
 	
+
+void kalibruj_ruchy(void)
+{
+	des_vl=-0.5;
+	des_vr=-0.5;
+	
+	_delay_ms(22220);
+	
+	des_vl=0;
+	des_vr=0;
+	
+	switch (mouse_dir_real)
+	{
+		case UP:
+		par.posy=labposy_real*180+45;
+		forward(par.posy+43);
+		
+		break;
+		
+		case DOWN:
+		
+		par.posy=labposy_real*180+135;
+		forward(par.posy-43);
+		break;
+		
+		case RIGHT:
+		par.posx =labposx_real*180+45;
+		forward(par.posx+43);
+		break;
+		
+		case LEFT:
+		par.posx =labposx_real*180+135;
+		forward(par.posx-43);
+		break;
+	}
+	
+	
+	
+	if (((labyrinth[labposx_real][labposy_real]&turn2(RIGHT))==0))
+	{rotateAngle(-PI/2);
+		mouse_dir_real=turn2(LEFT);
+		kali_obrot=1;
+	}
+	
+	else
+	{rotateAngle(PI/2);
+		mouse_dir_real=turn2(RIGHT);
+		kali_obrot=2;
+	}
+	
+	
+	
+	des_vl=-0.5;
+	des_vr=-0.5;
+	_delay_ms(22220);
+	des_vl=0;
+	des_vr=0;
+	
+	switch (mouse_dir_real)
+	{
+		case UP:
+		par.posy=labposy_real*180+45;
+		forward(par.posy+43);
+		
+		break;
+		
+		case DOWN:
+		
+		par.posy=labposy_real*180+135;
+		forward(par.posy-43);
+		break;
+		
+		case RIGHT:
+		par.posx =labposx_real*180+45;
+		forward(par.posx+43);
+		break;
+		
+		case LEFT:
+		par.posx =labposx_real*180+135;
+		forward(par.posx-43);
+		break;
+	}
+	
+	kal_count=0;
+	
+	
+	
+	switch (mouse_dir_real)
+	{
+		case UP:
+		par.dir=0;
+		break;
+		
+		case DOWN:
+		par.dir=PI;
+		break;
+		
+		case RIGHT:
+		par.dir=PI/2;
+		break;
+		
+		case LEFT:
+		par.dir=3*PI/2;
+		break;
+	}
+	
+	
+}
+
+void kalibruj_poczatek(void)
+{
+	short debRF=debancer(adcPomiar_RF(),adcPomiar_RF(),adcPomiar_RF());  // pomiar RF
+	_delay_ms(1);
+	short	 debLF=debancer(adcPomiar_LF(),adcPomiar_LF(),adcPomiar_LF());  // pomiar LF
+	_delay_ms(1);
+	
+	if(((debRF==-1)||(debRF==-1))|| (debRF!=debLF))
+	;//return (-1);
+	
+	else
+	if(debRF==0)
+	labyrinth[0][0]&=(~UP);
+	
+	_delay_ms(1000);
+	
+	des_vl=-0.5;
+	des_vr=-0.5;
+	_delay_ms(201);
+	des_vl=0;
+	des_vr=0;
+	
+	_delay_ms(201);
+	par.posy=43;
+	forward(par.posy+30);
+	rotateAngle(PI/2);
+
+	debRF=debancer(adcPomiar_RF(),adcPomiar_RF(),adcPomiar_RF());  // pomiar RF
+	_delay_ms(1);
+	debLF=debancer(adcPomiar_LF(),adcPomiar_LF(),adcPomiar_LF());  // pomiar LF
+	_delay_ms(1);
+
+	if(((debRF==-1)||(debRF==-1))|| (debRF!=debLF))
+	;//return (-1);
+	else if(debRF==0)
+	labyrinth[0][0]&=(~RIGHT);
+
+
+	discovered[0][0]=1;
+	des_vl=-0.5;
+	des_vr=-0.5;
+	
+	_delay_ms(201);
+	des_vl=0;
+	des_vr=0;
+	
+	_delay_ms(201);
+	par.posx =43;
+	par.dir=3*PI/2;
+	L_ENKODER = 0;
+	R_ENKODER = 0;
+	forward(par.posx+30);
+	
+	
+	
+	kal_count = 0;
+	
+}
+
+
+void kalibruj(void)
+{
+	if ((kal_count > 2) &&   (((labyrinth[labposx_real][labposy_real]&UP)==0)||((labyrinth[labposx_real][labposy_real]&DOWN)==0))  &&   (((labyrinth[labposx_real][labposy_real]&LEFT)==0)||((labyrinth[labposx_real][labposy_real]&RIGHT)==0))  )
+	{
+		
+		if ((labyrinth[labposx_real][labposy_real]&turn2(INVERS))==0)
+		{
+			kalibruj_ruchy();
+			if (kali_obrot==1)
+			{
+				rotateAngle(PI/2);
+				mouse_dir_real=turn2(RIGHT);
+			}
+			
+			
+			else
+			{
+				
+				
+				rotateAngle(-PI/2);
+				mouse_dir_real=turn2(LEFT);
+			}
+		}
+		
+		else if ((labyrinth[labposx_real][labposy_real]&turn2(RIGHT))==0)
+		{rotateAngle(-PI/2);
+			mouse_dir_real=turn2(LEFT);
+			kalibruj_ruchy();
+			rotateAngle(-PI);
+			mouse_dir_real=turn2(INVERS);
+		}
+		
+		else
+		{rotateAngle(PI/2);
+			mouse_dir_real=turn2(RIGHT);
+			kalibruj_ruchy();
+			rotateAngle(-PI);
+			mouse_dir_real=turn2(INVERS);
+		}
+		
+		
+		
+		
+	}
+	
+}
